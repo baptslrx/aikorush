@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+app/build/
+app/dist/
+app/screenshots/
+app/*.spec
+macos/build/
+macos/build.log
+dist/
+.DS_Store
