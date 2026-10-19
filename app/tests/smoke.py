@@ -182,7 +182,9 @@ def main() -> int:
 
 if __name__ == "__main__":
     try:
-        sys.exit(main())
+        code = main()
+        sys.stdout.flush()
+        os._exit(code)  # sortie immédiate : évite un plantage de Qt/PyAV à la fermeture de Python
     except Exception:
         import traceback
 
