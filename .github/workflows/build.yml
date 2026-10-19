@@ -11,6 +11,7 @@ permissions:
 env:
   PYTHONUTF8: "1"
   PYTHONIOENCODING: utf-8
+  PYTHONUNBUFFERED: "1"
 
 jobs:
   build:
@@ -46,6 +47,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt pyinstaller pillow
       - name: Tests automatiques
+        timeout-minutes: 12
         env:
           QT_QPA_PLATFORM: ${{ matrix.name == 'Linux' && 'offscreen' || '' }}
         run: |

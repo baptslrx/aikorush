@@ -1,8 +1,10 @@
 """Test automatique d'AikoRush : vrais clips générés, traitement complet, captures de la fenêtre."""
 from __future__ import annotations
 
+import faulthandler
 import os
 import subprocess
+import time
 import sys
 import tempfile
 import threading
@@ -33,7 +35,12 @@ def check(cond: bool, what: str):
 
 
 def ff(*args):
-    subprocess.run([ffmpeg_exe(), "-hide_banner", "-loglevel", "error", "-y", *args], check=True)
+    subprocess.run([ffmpeg_exe(), "-nostdin", "-hide_banner", "-loglevel", "error", "-y", *args], check=True,
+                   stdin=subprocess.DEVNULL, timeout=120)
+
+
+def step(msg: str):
+    print(f"[{time.strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
 def make_rushes(d: Path):
@@ -65,16 +72,21 @@ def main() -> int:
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
     except Exception:
         pass
+    # Si quelque chose bloque, on affiche où (tous les fils) et on s'arrête au bout de 8 minutes
+    faulthandler.dump_traceback_later(480, exit=True)
+    step("démarrage")
     app = QApplication(sys.argv)
+    step("Qt prêt")
     shots = ROOT / "screenshots"
     shots.mkdir(exist_ok=True)
 
     with tempfile.TemporaryDirectory() as tmp:
         src = Path(tmp) / "Tournage NTO"
         src.mkdir()
+        step("création des rushs de test")
         make_rushes(src)
 
-        print("== analyse")
+        step("analyse")
         files = find_media([src])
         check(sorted(f.name for f in files) == ["C0001.MP4", "IMG_4521.MOV", "ZOOM0001.WAV"],
               f"fichiers trouvés : {[f.name for f in files]}")
@@ -91,9 +103,10 @@ def main() -> int:
         assign_names(clips)
         check(by["C0001.MP4"].new_name == "2026-10-19_A7SIII_001", f"nom : {by['C0001.MP4'].new_name}")
 
-        print("== fenêtre")
+        step("fenêtre")
         for dark in (True, False):
             theme.is_dark = lambda dark=dark: dark
+            step(f"fenêtre {'sombre' if dark else 'claire'}")
             w = MainWindow()
             w.apply_theme()
             w.out_dir = Path(tmp) / "Tournage NTO - AikoRush"
@@ -115,7 +128,7 @@ def main() -> int:
                 w2.close()
             w.close()
 
-        print("== traitement")
+        step("traitement")
         out = Path(tmp) / "Sortie"
         done = threading.Event()
         res = {}

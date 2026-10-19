@@ -199,7 +199,7 @@ class Runner:
 
     def _step_silence(self, c: Clip, sub):
         threshold, minimum = self.opt.threshold_db, self.opt.min_silence
-        cmd = [ffmpeg_exe(), "-hide_banner", "-nostats", "-i", str(self.rush_path(c)), "-map", "0:a:0",
+        cmd = [ffmpeg_exe(), "-nostdin", "-hide_banner", "-nostats", "-i", str(self.rush_path(c)), "-map", "0:a:0",
                "-af", f"silencedetect=noise={threshold}dB:d={minimum}", "-progress", "pipe:2",
                "-f", "null", "-"]
         out = self._exec(cmd, c.duration, sub)
@@ -222,7 +222,7 @@ class Runner:
 
     def _ffmpeg(self, args: list[str], dest: Path, duration: float, sub):
         tmp = dest.with_name(dest.stem + ".partial" + dest.suffix)
-        cmd = [ffmpeg_exe(), "-hide_banner", "-nostats", "-y", *args, "-progress", "pipe:2", str(tmp)]
+        cmd = [ffmpeg_exe(), "-nostdin", "-hide_banner", "-nostats", "-y", *args, "-progress", "pipe:2", str(tmp)]
         try:
             self._exec(cmd, duration, sub)
         except BaseException:
@@ -232,7 +232,8 @@ class Runner:
 
     def _exec(self, cmd: list[str], duration: float, sub) -> str:
         """Lance ffmpeg, suit la progression, renvoie sa sortie d'erreur (utile pour silencedetect)."""
-        self._proc = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True,
+        self._proc = subprocess.Popen(cmd, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                                      stderr=subprocess.PIPE, text=True,
                                       encoding="utf-8", errors="replace", creationflags=NO_WINDOW)
         lines: list[str] = []
         assert self._proc.stderr is not None
