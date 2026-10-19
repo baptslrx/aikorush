@@ -1,0 +1,45 @@
+[23:29:16] démarrage
+[23:29:16] Qt prêt
+[23:29:16] création des rushs de test
+[23:29:20] analyse
+  ok   fichiers trouvés : ['C0001.MP4', 'IMG_4521.MOV', 'ZOOM0001.WAV']
+  C0001.MP4: video 6.00s 25 1920x1080 caméra=A7SIII date=2026-10-19 14:03:22 audio=1 
+  IMG_4521.MOV: video 4.00s 30 1280x720 caméra=iPhone15Pro date=2026-10-19 15:10:00 audio=1 
+  ZOOM0001.WAV: audio 5.00s 25 0x0 caméra=ZOOM date=2026-10-19 23:29:20.342004 audio=1 
+  ok   caméra Sony reconnue (A7SIII)
+  ok   date Sony lue dans le XML
+  ok   iPhone reconnu
+  métadonnées iPhone : {'com.apple.quicktime.model': 'iPhone 15 Pro', 'creation_time': '2026-10-19T15:10:00.000000Z;2026-10-19T15:10:00Z'}
+  ok   date de tournage iPhone lue
+  ok   vidéo Sony reconnue (1920x1080)
+  ok   vidéo iPhone reconnue (30 i/s)
+  ok   enregistreur Zoom reconnu
+  ok   durée lue
+  ok   nom : 2026-10-19_A7SIII_001
+[23:29:20] fenêtre
+[23:29:20] fenêtre sombre
+[23:29:20] fenêtre claire
+[23:29:20] traitement
+  erreurs : []
+  ok   aucune erreur
+  ok   rush copié et renommé
+  ok   audio Zoom copié et renommé
+  ok   proxy créé dans Rushs/Proxy
+  proxy : prores 1920x1080
+  ok   proxy en ProRes
+  ok   proxy en 1080p maximum
+  ok   audio séparé en WAV
+  silences Sony : [(2.020136, 4.01712)]
+  ok   silence repéré (2 s → 4 s)
+  ok   silence repéré dans l'audio Zoom
+  ok   timeline Resolve créée
+  ok   marqueurs dans la timeline
+  ok   les 3 rushs dans la timeline
+  ok   tableau des silences
+  ok   rapport
+  ok   Lisez-moi
+  ok   original intact
+
+Captures : fenetre-clair.png, fenetre-en-cours.png, fenetre-sombre.png, fenetre-vide.png
+
+Tout est OK
