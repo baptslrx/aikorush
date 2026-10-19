@@ -98,6 +98,11 @@ def main() -> int:
         check(by["C0001.MP4"].camera == "A7SIII", "caméra Sony reconnue (A7SIII)")
         check(by["C0001.MP4"].created.strftime("%Y-%m-%d %H:%M") == "2026-10-19 14:03", "date Sony lue dans le XML")
         check(by["IMG_4521.MOV"].camera.startswith("iPhone15"), "iPhone reconnu")
+        print("  métadonnées iPhone :", {k: v for k, v in by["IMG_4521.MOV"].tags.items() if "date" in k.lower()
+                                          or "time" in k.lower()})
+        check(by["C0001.MP4"].kind == "video" and by["C0001.MP4"].width == 1920, "vidéo Sony reconnue (1920x1080)")
+        check(by["IMG_4521.MOV"].kind == "video" and abs(float(by["IMG_4521.MOV"].fps) - 30) < 0.1,
+              "vidéo iPhone reconnue (30 i/s)")
         check(by["ZOOM0001.WAV"].camera == "ZOOM" and by["ZOOM0001.WAV"].kind == "audio", "enregistreur Zoom reconnu")
         check(abs(by["C0001.MP4"].duration - 6) < 0.2, "durée lue")
         assign_names(clips)
@@ -120,6 +125,7 @@ def main() -> int:
                 w._progress(0.42, "Proxy · 2026-10-19_A7SIII_001")
                 app.processEvents()
                 w.grab().save(str(shots / "fenetre-en-cours.png"))
+                w._set_state("ready")  # sinon la fenêtre demande « Arrêter et quitter ? » en se fermant
                 w2 = MainWindow()
                 w2.resize(940, 600)
                 w2.show()

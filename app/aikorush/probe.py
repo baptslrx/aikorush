@@ -35,6 +35,7 @@ class Clip:
     new_name: str = ""              # sans extension
     selected: bool = True
     error: str = ""
+    tags: dict = field(default_factory=dict, repr=False)
 
     @property
     def has_audio(self) -> bool:
@@ -135,6 +136,14 @@ def _parse_date(v: str | None) -> datetime | None:
     return None
 
 
+def _is_cover(stream) -> bool:
+    """Vraie piste vidéo ou simple image de couverture (pochette) ?"""
+    try:
+        return bool(int(stream.disposition) & 0x0400)  # AV_DISPOSITION_ATTACHED_PIC
+    except Exception:
+        return False
+
+
 def probe(path: Path) -> Clip:
     import av
 
@@ -150,7 +159,7 @@ def probe(path: Path) -> Clip:
             for s in c.streams:
                 for k, v in (s.metadata or {}).items():
                     tags.setdefault(k, v)
-                if s.type == "video" and video is None and not getattr(s.disposition, "attached_pic", False):
+                if s.type == "video" and video is None and not _is_cover(s):
                     video = s
                 elif s.type == "audio":
                     clip.audio_streams += 1
@@ -171,6 +180,7 @@ def probe(path: Path) -> Clip:
         clip.error = f"illisible ({type(e).__name__})"
         clip.selected = False
 
+    clip.tags = tags
     sony_model, sony_date = _sony_xml(path)
     created = sony_date or _parse_date(tags.get("creation_time") or tags.get("com.apple.quicktime.creationdate")
                                        or tags.get("date"))
