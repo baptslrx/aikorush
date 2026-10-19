@@ -163,7 +163,7 @@ class MainWindow(QWidget):
         self.sp_db.setRange(-70, -10)
         self.sp_db.setValue(-35)
         self.sp_db.setSuffix(" dB")
-        self.sp_db.setFixedWidth(90)
+        self.sp_db.setFixedWidth(118)
         self.sp_db.setToolTip("En dessous de ce niveau, c'est considéré comme du silence.")
         lab2 = QLabel("pendant au moins")
         lab2.setObjectName("hint")
@@ -173,7 +173,7 @@ class MainWindow(QWidget):
         self.sp_min.setSingleStep(0.5)
         self.sp_min.setValue(1.0)
         self.sp_min.setSuffix(" s")
-        self.sp_min.setFixedWidth(80)
+        self.sp_min.setFixedWidth(100)
         self.sp_min.setToolTip("Durée minimale d'un silence pour être repéré.")
         for w in (lab, self.sp_db, lab2, self.sp_min):
             row2.addWidget(w)
