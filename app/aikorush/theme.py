@@ -8,9 +8,9 @@ ACCENT = QColor("#7DC8FF")
 ON_ACCENT = QColor("#05121C")
 
 DARK = dict(bg=QColor(10, 10, 12), surface=QColor("#17171A"), line=QColor(255, 255, 255, 23),
-            text=QColor("#F5F7FA"), subtext=QColor("#8C949E"))
+            text=QColor("#F5F7FA"), subtext=QColor("#8C949E"), accent_text=QColor("#7DC8FF"))
 LIGHT = dict(bg=QColor(255, 255, 255), surface=QColor("#F2F7FC"), line=QColor(0, 0, 0, 20),
-             text=QColor("#0A0D10"), subtext=QColor("#6B7380"))
+             text=QColor("#0A0D10"), subtext=QColor("#6B7380"), accent_text=QColor("#1F7FC8"))
 
 
 def is_dark() -> bool:

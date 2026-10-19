@@ -137,9 +137,11 @@ class MainWindow(QWidget):
 
         opts = QFrame()
         opts.setObjectName("card")
-        ol = QHBoxLayout(opts)
-        ol.setContentsMargins(14, 10, 14, 10)
-        ol.setSpacing(18)
+        og = QVBoxLayout(opts)
+        og.setContentsMargins(14, 10, 14, 10)
+        og.setSpacing(8)
+        row1 = QHBoxLayout()
+        row1.setSpacing(22)
         self.cb_copy = QCheckBox("Copier et renommer")
         self.cb_proxy = QCheckBox("Proxys ProRes")
         self.cb_audio = QCheckBox("Audio séparé (WAV)")
@@ -147,29 +149,39 @@ class MainWindow(QWidget):
         for cb in (self.cb_copy, self.cb_proxy, self.cb_audio, self.cb_sil):
             cb.setChecked(True)
             cb.toggled.connect(self._refresh_summary)
-            ol.addWidget(cb)
+            row1.addWidget(cb)
+        row1.addStretch(1)
         self.cb_copy.setToolTip("Copie tes rushs dans « Rushs/ » avec un nom date_caméra_numéro. Les originaux ne bougent pas.")
         self.cb_proxy.setToolTip("ProRes Proxy 1080p max, dans « Rushs/Proxy/ » : DaVinci Resolve les relie tout seul.")
         self.cb_audio.setToolTip("L'audio de chaque vidéo en WAV 48 kHz / 24 bits, dans « Audio/ ».")
         self.cb_sil.setToolTip("Marqueurs dans une timeline Resolve + liste des silences (CSV et rapport).")
-        ol.addStretch(1)
-        lab = QLabel("Seuil")
+        row2 = QHBoxLayout()
+        row2.setSpacing(8)
+        lab = QLabel("Un silence, c'est en dessous de")
         lab.setObjectName("hint")
         self.sp_db = QSpinBox()
         self.sp_db.setRange(-70, -10)
         self.sp_db.setValue(-35)
         self.sp_db.setSuffix(" dB")
+        self.sp_db.setFixedWidth(90)
         self.sp_db.setToolTip("En dessous de ce niveau, c'est considéré comme du silence.")
+        lab2 = QLabel("pendant au moins")
+        lab2.setObjectName("hint")
         self.sp_min = QDoubleSpinBox()
         self.sp_min.setRange(0.3, 10)
+        self.sp_min.setDecimals(1)
         self.sp_min.setSingleStep(0.5)
         self.sp_min.setValue(1.0)
         self.sp_min.setSuffix(" s")
+        self.sp_min.setFixedWidth(80)
         self.sp_min.setToolTip("Durée minimale d'un silence pour être repéré.")
-        ol.addWidget(lab)
-        ol.addWidget(self.sp_db)
-        ol.addWidget(self.sp_min)
-        self.cb_sil.toggled.connect(lambda on: (self.sp_db.setEnabled(on), self.sp_min.setEnabled(on)))
+        for w in (lab, self.sp_db, lab2, self.sp_min):
+            row2.addWidget(w)
+        row2.addStretch(1)
+        self.sil_row = [lab, self.sp_db, lab2, self.sp_min]
+        self.cb_sil.toggled.connect(lambda on: [w.setEnabled(on) for w in self.sil_row])
+        og.addLayout(row1)
+        og.addLayout(row2)
         pl.addWidget(opts)
 
         dest = QHBoxLayout()
@@ -247,7 +259,9 @@ class MainWindow(QWidget):
             QProgressBar::chunk {{ background: {css(ACCENT)}; border-radius: 2px; }}
             QCheckBox {{ background: transparent; spacing: 7px; }}
             QCheckBox::indicator {{ width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid {css(t['subtext'])}; }}
-            QCheckBox::indicator:checked {{ background: {css(ACCENT)}; border-color: {css(ACCENT)}; }}
+            QCheckBox::indicator:checked {{ background: {css(ACCENT)}; border-color: {css(ACCENT)};
+                                           image: none; }}
+            QCheckBox:disabled {{ color: {css(t['subtext'])}; }}
             QSpinBox, QDoubleSpinBox {{ background: {css(t['bg'])}; border: 1px solid {css(t['line'])};
                                        border-radius: 6px; padding: 3px 6px; }}
         """)
@@ -362,7 +376,7 @@ class MainWindow(QWidget):
                 if not c.selected:
                     item.setForeground(t["subtext"])
                 self.table.setItem(r, col, item)
-            self.table.item(r, 5).setForeground(ACCENT if c.selected else t["subtext"])
+            self.table.item(r, 5).setForeground(t["accent_text"] if c.selected else t["subtext"])
         self.table.blockSignals(False)
 
     def _item_changed(self, item: QTableWidgetItem):
