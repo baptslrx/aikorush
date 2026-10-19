@@ -124,6 +124,12 @@ def _camera_from_tags(tags: dict[str, str], path: Path) -> str | None:
 def _parse_date(v: str | None) -> datetime | None:
     if not v:
         return None
+    if ";" in v:  # valeur en double (« 2026-10-19T15:10:00.000000Z;2026-10-19T15:10:00Z »)
+        for part in v.split(";"):
+            d = _parse_date(part)
+            if d:
+                return d
+        return None
     v = v.strip().replace("Z", "+00:00")
     for fmt in (None, "%Y-%m-%d %H:%M:%S", "%Y:%m:%d %H:%M:%S"):
         try:

@@ -100,6 +100,7 @@ def main() -> int:
         check(by["IMG_4521.MOV"].camera.startswith("iPhone15"), "iPhone reconnu")
         print("  métadonnées iPhone :", {k: v for k, v in by["IMG_4521.MOV"].tags.items() if "date" in k.lower()
                                           or "time" in k.lower()})
+        check(by["IMG_4521.MOV"].created.strftime("%Y-%m-%d") == "2026-10-19", "date de tournage iPhone lue")
         check(by["C0001.MP4"].kind == "video" and by["C0001.MP4"].width == 1920, "vidéo Sony reconnue (1920x1080)")
         check(by["IMG_4521.MOV"].kind == "video" and abs(float(by["IMG_4521.MOV"].fps) - 30) < 0.1,
               "vidéo iPhone reconnue (30 i/s)")
